@@ -1,51 +1,38 @@
-# Developer Analytics Platform - MVP Implementation Plan
+# NexusMetrics Premium Redesign - MVP Todo List
 
-## Project Structure
-```
-nexus-metrics/
-├── backend/
-│   ├── main.py (FastAPI app, API endpoints)
-│   ├── models.py (Pydantic models)
-│   ├── database.py (PostgreSQL connection)
-│   ├── mock_data.py (Mock data generator)
-│   └── requirements.txt
-├── frontend/ (React + Shadcn-ui)
-│   ├── src/
-│   │   ├── components/
-│   │   │   ├── Dashboard.tsx (Main dashboard)
-│   │   │   ├── PRVelocityChart.tsx
-│   │   │   ├── BuildFailuresChart.tsx
-│   │   │   ├── CodeChurnChart.tsx
-│   │   │   ├── RoleSelector.tsx
-│   │   │   └── AlertPanel.tsx
-│   │   ├── App.tsx
-│   │   └── main.tsx
-│   └── package.json
-├── database/
-│   └── schema.sql (PostgreSQL schema)
-└── README.md
-```
+## Goal
+Transform the dashboard from typical AI-generated design to a premium, unique Figma-quality interface with modern design trends.
 
-## Files to Create (Max 8 code files)
-1. **backend/main.py** - FastAPI application with endpoints
-2. **backend/mock_data.py** - Mock data generation
-3. **database/schema.sql** - PostgreSQL schema
-4. **src/App.tsx** - Main React app with routing
-5. **src/components/Dashboard.tsx** - Main dashboard component
-6. **src/components/MetricsCharts.tsx** - All visualization charts combined
-7. **src/components/RoleSelector.tsx** - Role-based view switcher
-8. **README.md** - Setup and deployment instructions
+## Files to Create/Modify (Max 8 files)
 
-## Implementation Strategy
-- Use Shadcn-ui template for React frontend
-- FastAPI backend with mock data (no real DB connection for MVP)
-- Plotly.js for interactive charts
-- Role-based filtering in frontend
-- Simple anomaly detection logic
-- Git push to provided repository
+1. **src/index.css** - Enhanced with advanced animations, 3D effects, gradient meshes, particle system
+2. **src/pages/Index.tsx** - Redesigned with bento-box layout, floating elements, premium hero section
+3. **src/components/MetricsCharts.tsx** - Custom styled charts with glassmorphism, 3D card effects
+4. **src/components/AlertPanel.tsx** - Neumorphic design with smooth animations
+5. **src/components/RoleSelector.tsx** - Premium dropdown with smooth transitions
+6. **src/components/ParticleBackground.tsx** - NEW: Animated particle system background
+7. **src/components/MetricCard.tsx** - NEW: Reusable 3D metric card component
+8. **index.html** - Update title and meta tags
 
-## Tech Stack
-- Backend: FastAPI + Python
-- Frontend: React + TypeScript + Shadcn-ui + Tailwind CSS
-- Visualization: Plotly.js
-- Mock Database: In-memory data structures
+## Design Features
+- Neumorphic glassmorphism cards with depth
+- 3D transforms and perspective effects
+- Gradient mesh backgrounds
+- Floating particle animation system
+- Bento-box asymmetric grid layout
+- Smooth micro-interactions
+- Premium color palette (deep purples, electric blues, neon accents)
+- Advanced typography with variable font weights
+- Custom scrollbar with gradient
+- Hover effects with 3D tilt
+- Staggered entrance animations
+- Liquid blob morphing backgrounds
+
+## Implementation Order
+1. Create new components (ParticleBackground, MetricCard)
+2. Update index.css with advanced styles
+3. Redesign Index.tsx with new layout
+4. Update MetricsCharts with premium styling
+5. Enhance AlertPanel and RoleSelector
+6. Update index.html
+7. Test and commit to GitHub

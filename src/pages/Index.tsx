@@ -3,9 +3,10 @@ import { UserRole } from '@/types';
 import RoleSelector from '@/components/RoleSelector';
 import AlertPanel from '@/components/AlertPanel';
 import MetricsCharts from '@/components/MetricsCharts';
+import ParticleBackground from '@/components/ParticleBackground';
+import MetricCard from '@/components/MetricCard';
 import { generatePRMetrics, generateBuildMetrics, generateCodeChurnMetrics, generateAlerts, generateDeveloperStats } from '@/lib/mockData';
-import { Activity, TrendingUp, GitPullRequest, Code2, AlertCircle } from 'lucide-react';
-import { Card } from '@/components/ui/card';
+import { Activity, TrendingUp, GitPullRequest, Code2, AlertCircle, Sparkles, Zap } from 'lucide-react';
 
 export default function Dashboard() {
   const [role, setRole] = useState<UserRole>('developer');
@@ -33,29 +34,40 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-slate-950">
-      {/* Animated background elements */}
+    <div className="min-h-screen relative overflow-hidden">
+      {/* Animated Background */}
+      <div className="fixed inset-0 bg-gradient-to-br from-slate-950 via-purple-950 to-slate-950" />
+      <ParticleBackground />
+      
+      {/* Liquid Blobs */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl animate-pulse-slow" />
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse-slow" style={{ animationDelay: '2s' }} />
+        <div className="liquid-blob absolute top-0 left-1/4 w-96 h-96 bg-purple-500/20 rounded-full" />
+        <div className="liquid-blob absolute bottom-0 right-1/4 w-96 h-96 bg-blue-500/20 rounded-full" style={{ animationDelay: '5s' }} />
+        <div className="liquid-blob absolute top-1/2 left-1/2 w-96 h-96 bg-pink-500/20 rounded-full" style={{ animationDelay: '10s' }} />
       </div>
 
+      {/* Gradient Mesh Overlay */}
+      <div className="fixed inset-0 gradient-mesh pointer-events-none" />
+
       {/* Header */}
-      <header className="sticky top-0 z-50 border-b border-white/10 backdrop-blur-xl bg-slate-950/80">
+      <header className="sticky top-0 z-50 backdrop-blur-2xl bg-slate-950/50 border-b border-white/5">
         <div className="container mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <div className="relative">
-                <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl blur-lg opacity-50 animate-pulse-slow" />
-                <div className="relative h-12 w-12 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-2xl">
-                  <Activity className="h-7 w-7 text-white" strokeWidth={2.5} />
+              <div className="relative group">
+                <div className="absolute inset-0 bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 rounded-2xl blur-xl opacity-70 group-hover:opacity-100 transition-opacity duration-300 animate-pulse" />
+                <div className="relative h-14 w-14 rounded-2xl bg-gradient-to-br from-purple-600 via-pink-600 to-blue-600 flex items-center justify-center shadow-2xl transform group-hover:scale-110 transition-transform duration-300">
+                  <Activity className="h-8 w-8 text-white" strokeWidth={2.5} />
                 </div>
               </div>
               <div>
-                <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+                <h1 className="text-3xl font-bold text-gradient">
                   NexusMetrics
                 </h1>
-                <p className="text-sm text-slate-400 font-medium">Engineering Intelligence Platform</p>
+                <p className="text-sm text-purple-300/80 font-medium flex items-center gap-2">
+                  <Sparkles className="h-3 w-3" />
+                  Engineering Intelligence Platform
+                </p>
               </div>
             </div>
             <RoleSelector role={role} onRoleChange={setRole} />
@@ -64,18 +76,19 @@ export default function Dashboard() {
       </header>
 
       {/* Main Content */}
-      <main className="container mx-auto px-6 py-8 relative z-10">
+      <main className="container mx-auto px-6 py-12 relative z-10">
         <div className="space-y-8">
-          {/* Hero Section */}
-          <div className={`relative overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-slate-900/90 to-slate-800/90 backdrop-blur-xl p-8 ${mounted ? 'animate-fade-in' : 'opacity-0'}`}>
-            <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-full blur-3xl" />
+          {/* Hero Section with Neumorphic Design */}
+          <div className={`neuro-card rounded-3xl p-8 ${mounted ? 'animate-scale-in' : 'opacity-0'}`}>
             <div className="relative">
-              <div className="flex items-center gap-3 mb-3">
-                <div className="h-2 w-2 rounded-full bg-green-400 animate-pulse" />
-                <span className="text-xs font-semibold text-green-400 uppercase tracking-wider">Live Dashboard</span>
+              <div className="flex items-center gap-3 mb-4">
+                <div className="h-3 w-3 rounded-full bg-emerald-400 animate-pulse shadow-lg shadow-emerald-400/50" />
+                <span className="text-xs font-bold text-emerald-400 uppercase tracking-widest">Live Dashboard</span>
+                <div className="flex-1 h-px bg-gradient-to-r from-emerald-400/50 to-transparent" />
               </div>
-              <h2 className="text-3xl font-bold text-white mb-3">
+              <h2 className="text-4xl font-bold text-white mb-3 flex items-center gap-3">
                 Welcome back, {role === 'developer' ? 'Developer' : role === 'team-lead' ? 'Team Lead' : 'Engineering Manager'}
+                <Zap className="h-8 w-8 text-yellow-400 animate-pulse" />
               </h2>
               <p className="text-slate-300 text-lg max-w-3xl leading-relaxed">
                 {roleDescriptions[role]}
@@ -83,84 +96,56 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {/* Quick Stats Grid */}
-          <div className={`grid gap-6 md:grid-cols-2 lg:grid-cols-4 ${mounted ? 'animate-slide-up' : 'opacity-0'}`}>
-            <Card className="relative overflow-hidden border-white/10 bg-gradient-to-br from-blue-500/10 to-blue-600/5 backdrop-blur-xl metric-card-hover group">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/20 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-500" />
-              <div className="relative p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="h-12 w-12 rounded-xl bg-blue-500/20 flex items-center justify-center">
-                    <GitPullRequest className="h-6 w-6 text-blue-400" />
-                  </div>
-                  <TrendingUp className="h-5 w-5 text-green-400" />
-                </div>
-                <div className="space-y-1">
-                  <p className="text-sm font-medium text-slate-400">PR Velocity</p>
-                  <p className="text-3xl font-bold text-white">{latestPR?.prsMerged || 0}</p>
-                  <p className="text-xs text-slate-500">Merged today</p>
-                </div>
-              </div>
-            </Card>
-
-            <Card className="relative overflow-hidden border-white/10 bg-gradient-to-br from-green-500/10 to-green-600/5 backdrop-blur-xl metric-card-hover group">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-green-500/20 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-500" />
-              <div className="relative p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="h-12 w-12 rounded-xl bg-green-500/20 flex items-center justify-center">
-                    <TrendingUp className="h-6 w-6 text-green-400" />
-                  </div>
-                  <div className="text-xs font-semibold text-green-400 px-2 py-1 rounded-full bg-green-500/20">+2.3%</div>
-                </div>
-                <div className="space-y-1">
-                  <p className="text-sm font-medium text-slate-400">Build Success</p>
-                  <p className="text-3xl font-bold text-white">{buildSuccessRate}%</p>
-                  <p className="text-xs text-slate-500">Last 24 hours</p>
-                </div>
-              </div>
-            </Card>
-
-            <Card className="relative overflow-hidden border-white/10 bg-gradient-to-br from-purple-500/10 to-purple-600/5 backdrop-blur-xl metric-card-hover group">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-purple-500/20 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-500" />
-              <div className="relative p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="h-12 w-12 rounded-xl bg-purple-500/20 flex items-center justify-center">
-                    <Code2 className="h-6 w-6 text-purple-400" />
-                  </div>
-                  <Activity className="h-5 w-5 text-purple-400 animate-pulse" />
-                </div>
-                <div className="space-y-1">
-                  <p className="text-sm font-medium text-slate-400">Code Commits</p>
-                  <p className="text-3xl font-bold text-white">{latestChurn?.commits || 0}</p>
-                  <p className="text-xs text-slate-500">Active today</p>
-                </div>
-              </div>
-            </Card>
-
-            <Card className="relative overflow-hidden border-white/10 bg-gradient-to-br from-orange-500/10 to-orange-600/5 backdrop-blur-xl metric-card-hover group">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-orange-500/20 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-500" />
-              <div className="relative p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="h-12 w-12 rounded-xl bg-orange-500/20 flex items-center justify-center">
-                    <AlertCircle className="h-6 w-6 text-orange-400" />
-                  </div>
-                  <div className="text-xs font-semibold text-orange-400 px-2 py-1 rounded-full bg-orange-500/20">-15%</div>
-                </div>
-                <div className="space-y-1">
-                  <p className="text-sm font-medium text-slate-400">Review Time</p>
-                  <p className="text-3xl font-bold text-white">{latestPR?.avgReviewTime || 0}h</p>
-                  <p className="text-xs text-slate-500">Current average</p>
-                </div>
-              </div>
-            </Card>
+          {/* Bento Box Grid - Asymmetric Layout */}
+          <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 ${mounted ? 'animate-slide-up-fade' : 'opacity-0'}`}>
+            <MetricCard
+              icon={GitPullRequest}
+              title="PR Velocity"
+              value={latestPR?.prsMerged || 0}
+              subtitle="Merged today"
+              trend={<div className="flex items-center gap-1 text-emerald-400 bg-emerald-500/10 px-2 py-1 rounded-full"><TrendingUp className="h-3 w-3" />+12%</div>}
+              gradient="bg-gradient-to-br from-blue-600/30 to-blue-800/30"
+              delay={0}
+            />
+            
+            <MetricCard
+              icon={TrendingUp}
+              title="Build Success"
+              value={`${buildSuccessRate}%`}
+              subtitle="Last 24 hours"
+              trend={<div className="flex items-center gap-1 text-emerald-400 bg-emerald-500/10 px-2 py-1 rounded-full"><TrendingUp className="h-3 w-3" />+2.3%</div>}
+              gradient="bg-gradient-to-br from-emerald-600/30 to-emerald-800/30"
+              delay={100}
+            />
+            
+            <MetricCard
+              icon={Code2}
+              title="Code Commits"
+              value={latestChurn?.commits || 0}
+              subtitle="Active today"
+              trend={<Activity className="h-4 w-4 text-purple-400 animate-pulse" />}
+              gradient="bg-gradient-to-br from-purple-600/30 to-purple-800/30"
+              delay={200}
+            />
+            
+            <MetricCard
+              icon={AlertCircle}
+              title="Review Time"
+              value={`${latestPR?.avgReviewTime || 0}h`}
+              subtitle="Current average"
+              trend={<div className="flex items-center gap-1 text-orange-400 bg-orange-500/10 px-2 py-1 rounded-full">-15%</div>}
+              gradient="bg-gradient-to-br from-orange-600/30 to-orange-800/30"
+              delay={300}
+            />
           </div>
 
-          {/* Alerts */}
-          <div className={mounted ? 'animate-scale-in' : 'opacity-0'} style={{ animationDelay: '0.2s' }}>
+          {/* Alerts with Enhanced Design */}
+          <div className={mounted ? 'animate-scale-in' : 'opacity-0'} style={{ animationDelay: '0.4s' }}>
             <AlertPanel alerts={alerts} />
           </div>
 
-          {/* Metrics Charts */}
-          <div className={mounted ? 'animate-scale-in' : 'opacity-0'} style={{ animationDelay: '0.3s' }}>
+          {/* Metrics Charts with Glassmorphism */}
+          <div className={mounted ? 'animate-scale-in' : 'opacity-0'} style={{ animationDelay: '0.5s' }}>
             <MetricsCharts
               prMetrics={prMetrics}
               buildMetrics={buildMetrics}
@@ -172,25 +157,34 @@ export default function Dashboard() {
         </div>
       </main>
 
-      {/* Footer */}
-      <footer className="relative z-10 border-t border-white/10 backdrop-blur-xl bg-slate-950/80 mt-16">
+      {/* Premium Footer */}
+      <footer className="relative z-10 backdrop-blur-2xl bg-slate-950/50 border-t border-white/5 mt-20">
         <div className="container mx-auto px-6 py-8">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
-                <Activity className="h-5 w-5 text-white" />
+              <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-purple-600 via-pink-600 to-blue-600 flex items-center justify-center shadow-lg">
+                <Activity className="h-6 w-6 text-white" />
               </div>
               <div>
-                <p className="text-sm font-semibold text-white">NexusMetrics</p>
+                <p className="text-sm font-bold text-white">NexusMetrics</p>
                 <p className="text-xs text-slate-400">Engineering Intelligence Platform</p>
               </div>
             </div>
             <div className="flex items-center gap-6 text-xs text-slate-400">
-              <span>FastAPI + PostgreSQL + React</span>
+              <span className="flex items-center gap-2">
+                <div className="h-2 w-2 rounded-full bg-purple-400" />
+                FastAPI + PostgreSQL + React
+              </span>
               <span>•</span>
-              <span>Real-time Analytics</span>
+              <span className="flex items-center gap-2">
+                <Zap className="h-3 w-3 text-yellow-400" />
+                Real-time Analytics
+              </span>
               <span>•</span>
-              <span>Built with ❤️</span>
+              <span className="flex items-center gap-2">
+                <Sparkles className="h-3 w-3 text-pink-400" />
+                Built with ❤️
+              </span>
             </div>
           </div>
         </div>
