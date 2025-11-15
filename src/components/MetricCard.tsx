@@ -1,5 +1,5 @@
 import { LucideIcon } from 'lucide-react';
-import { ReactNode } from 'react';
+import { ReactNode, memo } from 'react';
 
 interface MetricCardProps {
   icon: LucideIcon;
@@ -11,7 +11,8 @@ interface MetricCardProps {
   delay?: number;
 }
 
-export default function MetricCard({
+// Optimized: Memoized to prevent unnecessary re-renders
+const MetricCard = memo(function MetricCard({
   icon: Icon,
   title,
   value,
@@ -49,4 +50,6 @@ export default function MetricCard({
       </div>
     </div>
   );
-}
+});
+
+export default MetricCard;

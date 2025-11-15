@@ -1,38 +1,38 @@
 # NexusMetrics - Developer Analytics Platform
 
-An internal tool that aggregates GitHub/Jira/CI pipeline data to visualize developer productivity & bottlenecks.
+An internal tool that aggregates GitHub/Jira/CI pipeline data to visualize developer productivity and bottlenecks.
 
-## 🚀 Features
+## Features
 
-- **Time-series Metrics**: Track PR velocity, build failures, and code churn over time
-- **Role-based Dashboards**: Different views for Developers, Team Leads, and Managers
-- **Alert System**: Anomaly detection for critical metrics
-- **Interactive Visualizations**: Powered by Recharts for rich data visualization
-- **Mock Data**: Pre-populated with realistic sample data for demonstration
+- Time-series Metrics: Track PR velocity, build failures, and code churn over time
+- Role-based Dashboards: Different views for Developers, Team Leads, and Managers
+- Alert System: Anomaly detection for critical metrics
+- Interactive Visualizations: Powered by Recharts for rich data visualization
+- Mock Data: Pre-populated with realistic sample data for demonstration
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 ### Frontend
-- **React** with TypeScript
-- **Shadcn-ui** for UI components
-- **Tailwind CSS** for styling
-- **Recharts** for data visualization
-- **Vite** for build tooling
+- React with TypeScript
+- Shadcn-ui for UI components
+- Tailwind CSS for styling
+- Recharts for data visualization
+- Vite for build tooling
 
 ### Backend
-- **FastAPI** for REST API
-- **PostgreSQL** for data storage
-- **Pydantic** for data validation
-- **Uvicorn** as ASGI server
+- FastAPI for REST API
+- PostgreSQL for data storage
+- Pydantic for data validation
+- Uvicorn as ASGI server
 
-## 📊 Key Metrics
+## Key Metrics
 
-1. **PR Velocity**: Track pull requests opened, merged, and closed
-2. **Build Failures**: Monitor CI/CD pipeline success rates
-3. **Code Churn**: Analyze lines added/deleted and file changes
-4. **Team Performance**: Individual developer statistics and team distribution
+1. PR Velocity: Track pull requests opened, merged, and closed
+2. Build Failures: Monitor CI/CD pipeline success rates
+3. Code Churn: Analyze lines added/deleted and file changes
+4. Team Performance: Individual developer statistics and team distribution
 
-## 🎯 Role-Based Views
+## Role-Based Views
 
 ### Developer View
 - Personal metrics and performance
@@ -49,12 +49,12 @@ An internal tool that aggregates GitHub/Jira/CI pipeline data to visualize devel
 - Team distribution charts
 - Organization-wide metrics
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Frontend Setup
 
 ```bash
-cd /workspace/shadcn-ui
+cd /workspace/NexusMetrics
 pnpm install
 pnpm run dev
 ```
@@ -64,7 +64,7 @@ The frontend will be available at `http://localhost:5173`
 ### Backend Setup
 
 ```bash
-cd /workspace/shadcn-ui/backend
+cd /workspace/NexusMetrics/backend
 pip install -r requirements.txt
 python main.py
 ```
@@ -83,10 +83,10 @@ psql -U your_username -d your_database
 \i database/schema.sql
 ```
 
-## 📁 Project Structure
+## Project Structure
 
 ```
-nexus-metrics/
+NexusMetrics/
 ├── backend/
 │   ├── main.py              # FastAPI application
 │   └── requirements.txt     # Python dependencies
@@ -96,6 +96,8 @@ nexus-metrics/
 │   ├── components/
 │   │   ├── AlertPanel.tsx
 │   │   ├── MetricsCharts.tsx
+│   │   ├── MetricCard.tsx
+│   │   ├── ParticleBackground.tsx
 │   │   └── RoleSelector.tsx
 │   ├── lib/
 │   │   └── mockData.ts     # Mock data generation
@@ -106,7 +108,7 @@ nexus-metrics/
 └── README.md
 ```
 
-## 🔌 API Endpoints
+## API Endpoints
 
 - `GET /` - API information
 - `GET /api/metrics/pr` - PR velocity metrics
@@ -116,12 +118,12 @@ nexus-metrics/
 - `GET /api/developers/stats` - Developer statistics
 - `GET /api/health` - Health check
 
-## 🎨 Features in Detail
+## Features in Detail
 
 ### Anomaly Detection
 The alert system monitors:
 - Build failure rates exceeding 20%
-- PR review time increases > 40%
+- PR review time increases greater than 40%
 - Unusual code churn spikes
 
 ### Data Visualization
@@ -136,7 +138,7 @@ The alert system monitors:
 - Dark mode support
 - Accessible UI components
 
-## 🔧 Configuration
+## Configuration
 
 ### Environment Variables
 
@@ -148,18 +150,26 @@ GITHUB_TOKEN=your_github_token
 JIRA_API_TOKEN=your_jira_token
 ```
 
-## 📈 Future Enhancements
+## Performance Optimizations
 
-- [ ] Real GitHub API integration
-- [ ] Jira ticket tracking
-- [ ] CI/CD pipeline webhooks
-- [ ] Advanced anomaly detection with ML
-- [ ] Custom dashboard configuration
-- [ ] Export reports to PDF
-- [ ] Real-time updates with WebSockets
-- [ ] User authentication and authorization
+- React.memo for component memoization
+- useMemo and useCallback for expensive computations
+- CSS-based animations instead of canvas for better performance
+- Code splitting and lazy loading
+- Optimized build configuration with Vite
 
-## 🤝 Contributing
+## Future Enhancements
+
+- Real GitHub API integration
+- Jira ticket tracking
+- CI/CD pipeline webhooks
+- Advanced anomaly detection with ML
+- Custom dashboard configuration
+- Export reports to PDF
+- Real-time updates with WebSockets
+- User authentication and authorization
+
+## Contributing
 
 This is an internal tool for demonstration purposes. For production use:
 1. Replace mock data with real API integrations
@@ -168,14 +178,14 @@ This is an internal tool for demonstration purposes. For production use:
 4. Set up monitoring and logging
 5. Configure production database
 
-## 📝 License
+## License
 
 MIT License - Internal Use Only
 
-## 👥 Team
+## Team
 
-Built with ❤️ by the Engineering Team
+Built by the Engineering Team
 
 ---
 
-**Note**: This MVP uses mock data for demonstration. For production deployment, integrate with actual GitHub, Jira, and CI/CD APIs.
+Note: This MVP uses mock data for demonstration. For production deployment, integrate with actual GitHub, Jira, and CI/CD APIs.

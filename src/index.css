@@ -69,127 +69,58 @@
 }
 
 @layer utilities {
-  /* 3D Perspective Container */
-  .perspective-container {
-    perspective: 1000px;
-    transform-style: preserve-3d;
-  }
-
-  /* 3D Metric Card with Tilt Effect */
+  /* Optimized: Simplified 3D effects */
   .metric-card-3d {
     animation: slideUpFade 0.8s cubic-bezier(0.16, 1, 0.3, 1) backwards;
-    transform-style: preserve-3d;
     transition: transform 0.3s ease;
   }
 
   .metric-card-3d:hover {
-    transform: translateY(-8px) rotateX(2deg) rotateY(2deg);
+    transform: translateY(-8px);
   }
 
-  /* Liquid Blob Animation */
-  .liquid-blob {
-    animation: blobMorph 20s ease-in-out infinite;
-    filter: blur(40px);
-  }
-
-  @keyframes blobMorph {
-    0%, 100% {
-      border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
-      transform: translate(0, 0) scale(1);
-    }
-    25% {
-      border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%;
-      transform: translate(20px, -20px) scale(1.1);
-    }
-    50% {
-      border-radius: 50% 50% 50% 50% / 50% 50% 50% 50%;
-      transform: translate(-20px, 20px) scale(0.9);
-    }
-    75% {
-      border-radius: 70% 30% 50% 50% / 30% 50% 50% 70%;
-      transform: translate(20px, 20px) scale(1.05);
-    }
-  }
-
-  /* Gradient Mesh Background */
+  /* Optimized: Simplified gradient mesh */
   .gradient-mesh {
     background: 
-      radial-gradient(at 0% 0%, rgba(124, 58, 237, 0.3) 0px, transparent 50%),
-      radial-gradient(at 100% 0%, rgba(59, 130, 246, 0.3) 0px, transparent 50%),
-      radial-gradient(at 100% 100%, rgba(236, 72, 153, 0.3) 0px, transparent 50%),
-      radial-gradient(at 0% 100%, rgba(16, 185, 129, 0.3) 0px, transparent 50%);
+      radial-gradient(at 0% 0%, rgba(124, 58, 237, 0.2) 0px, transparent 50%),
+      radial-gradient(at 100% 0%, rgba(59, 130, 246, 0.2) 0px, transparent 50%),
+      radial-gradient(at 100% 100%, rgba(236, 72, 153, 0.2) 0px, transparent 50%),
+      radial-gradient(at 0% 100%, rgba(16, 185, 129, 0.2) 0px, transparent 50%);
   }
 
-  /* Glassmorphism Effect */
+  /* Optimized: Enhanced glassmorphism */
   .glass-card {
-    background: rgba(15, 23, 42, 0.6);
-    backdrop-filter: blur(20px) saturate(180%);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(15, 23, 42, 0.7);
+    backdrop-filter: blur(24px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.12);
     box-shadow: 
-      0 8px 32px 0 rgba(0, 0, 0, 0.37),
-      inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
+      0 8px 32px 0 rgba(0, 0, 0, 0.4),
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.08);
   }
 
-  /* Neumorphic Card */
+  /* Optimized: Modern neumorphic design */
   .neuro-card {
-    background: linear-gradient(145deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.9));
+    background: linear-gradient(145deg, rgba(30, 41, 59, 0.95), rgba(15, 23, 42, 0.95));
     box-shadow: 
-      12px 12px 24px rgba(0, 0, 0, 0.5),
-      -12px -12px 24px rgba(51, 65, 85, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.05);
+      12px 12px 24px rgba(0, 0, 0, 0.6),
+      -12px -12px 24px rgba(51, 65, 85, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.08);
   }
 
-  /* Shimmer Loading Effect */
-  .shimmer {
-    background: linear-gradient(
-      90deg,
-      transparent 0%,
-      rgba(255, 255, 255, 0.1) 50%,
-      transparent 100%
-    );
-    animation: shimmer 2s infinite;
-  }
-
-  @keyframes shimmer {
-    0% {
-      transform: translateX(-100%);
-    }
-    100% {
-      transform: translateX(100%);
-    }
-  }
-
-  /* Floating Animation */
+  /* Optimized: Smooth floating animation */
   .animate-float {
-    animation: float 6s ease-in-out infinite;
+    animation: float 8s ease-in-out infinite;
   }
 
   @keyframes float {
     0%, 100% {
       transform: translateY(0px) translateX(0px);
     }
-    25% {
+    33% {
       transform: translateY(-20px) translateX(10px);
     }
-    50% {
+    66% {
       transform: translateY(-10px) translateX(-10px);
-    }
-    75% {
-      transform: translateY(-30px) translateX(5px);
-    }
-  }
-
-  /* Pulse Glow */
-  .pulse-glow {
-    animation: pulseGlow 3s ease-in-out infinite;
-  }
-
-  @keyframes pulseGlow {
-    0%, 100% {
-      box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
-    }
-    50% {
-      box-shadow: 0 0 40px rgba(139, 92, 246, 0.6);
     }
   }
 
@@ -217,7 +148,7 @@
   @keyframes scaleIn {
     from {
       opacity: 0;
-      transform: scale(0.9);
+      transform: scale(0.95);
     }
     to {
       opacity: 1;
@@ -225,37 +156,7 @@
     }
   }
 
-  /* Fade In */
-  .animate-fade-in {
-    animation: fadeIn 0.8s ease-out backwards;
-  }
-
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
-  }
-
-  /* Rotate In */
-  .animate-rotate-in {
-    animation: rotateIn 1s cubic-bezier(0.16, 1, 0.3, 1) backwards;
-  }
-
-  @keyframes rotateIn {
-    from {
-      opacity: 0;
-      transform: rotate(-10deg) scale(0.9);
-    }
-    to {
-      opacity: 1;
-      transform: rotate(0) scale(1);
-    }
-  }
-
-  /* Text Gradient */
+  /* Optimized: Smooth text gradient */
   .text-gradient {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #4facfe 75%, #00f2fe 100%);
     -webkit-background-clip: text;
@@ -273,35 +174,12 @@
       background-position: 100% 50%;
     }
   }
-
-  /* Glow Border */
-  .glow-border {
-    position: relative;
-  }
-
-  .glow-border::before {
-    content: '';
-    position: absolute;
-    inset: -2px;
-    border-radius: inherit;
-    padding: 2px;
-    background: linear-gradient(45deg, #667eea, #764ba2, #f093fb, #4facfe);
-    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
-    opacity: 0;
-    transition: opacity 0.3s;
-  }
-
-  .glow-border:hover::before {
-    opacity: 1;
-  }
 }
 
-/* Premium Custom Scrollbar */
+/* Optimized: Modern custom scrollbar */
 ::-webkit-scrollbar {
-  width: 12px;
-  height: 12px;
+  width: 10px;
+  height: 10px;
 }
 
 ::-webkit-scrollbar-track {
@@ -327,13 +205,24 @@
   scrollbar-color: #8b5cf6 rgba(15, 23, 42, 0.5);
 }
 
-/* Smooth Scroll */
+/* Smooth scroll */
 html {
   scroll-behavior: smooth;
 }
 
-/* Selection Style */
+/* Selection style */
 ::selection {
   background: rgba(139, 92, 246, 0.3);
   color: white;
+}
+
+/* Performance optimization: Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo, useCallback, memo } from 'react';
 import { UserRole } from '@/types';
 import RoleSelector from '@/components/RoleSelector';
 import AlertPanel from '@/components/AlertPanel';
@@ -8,6 +8,13 @@ import MetricCard from '@/components/MetricCard';
 import { generatePRMetrics, generateBuildMetrics, generateCodeChurnMetrics, generateAlerts, generateDeveloperStats } from '@/lib/mockData';
 import { Activity, TrendingUp, GitPullRequest, Code2, AlertCircle, Sparkles, Zap } from 'lucide-react';
 
+// Optimized: Memoized role descriptions
+const roleDescriptions: Record<UserRole, string> = {
+  developer: 'Monitor your personal metrics, track team performance, and stay informed about project health.',
+  'team-lead': 'Oversee team productivity, identify bottlenecks, and drive engineering excellence across your squad.',
+  manager: 'Strategic insights across all teams. Make data-driven decisions to optimize organizational performance.',
+};
+
 export default function Dashboard() {
   const [role, setRole] = useState<UserRole>('developer');
   const [mounted, setMounted] = useState(false);
@@ -16,36 +23,42 @@ export default function Dashboard() {
     setMounted(true);
   }, []);
 
-  const prMetrics = generatePRMetrics();
-  const buildMetrics = generateBuildMetrics();
-  const codeChurnMetrics = generateCodeChurnMetrics();
-  const alerts = generateAlerts();
-  const developerStats = generateDeveloperStats();
+  // Optimized: Memoize expensive data generation - only regenerate when needed
+  const prMetrics = useMemo(() => generatePRMetrics(), []);
+  const buildMetrics = useMemo(() => generateBuildMetrics(), []);
+  const codeChurnMetrics = useMemo(() => generateCodeChurnMetrics(), []);
+  const alerts = useMemo(() => generateAlerts(), []);
+  const developerStats = useMemo(() => generateDeveloperStats(), []);
 
-  const latestPR = prMetrics[prMetrics.length - 1];
-  const latestBuild = buildMetrics[buildMetrics.length - 1];
-  const latestChurn = codeChurnMetrics[codeChurnMetrics.length - 1];
-  const buildSuccessRate = latestBuild ? ((latestBuild.successfulBuilds / latestBuild.totalBuilds) * 100).toFixed(1) : 0;
+  // Optimized: Memoize derived calculations
+  const latestPR = useMemo(() => prMetrics[prMetrics.length - 1], [prMetrics]);
+  const latestBuild = useMemo(() => buildMetrics[buildMetrics.length - 1], [buildMetrics]);
+  const latestChurn = useMemo(() => codeChurnMetrics[codeChurnMetrics.length - 1], [codeChurnMetrics]);
+  const buildSuccessRate = useMemo(() => 
+    latestBuild ? ((latestBuild.successfulBuilds / latestBuild.totalBuilds) * 100).toFixed(1) : 0,
+    [latestBuild]
+  );
 
-  const roleDescriptions = {
-    developer: 'Monitor your personal metrics, track team performance, and stay informed about project health.',
-    'team-lead': 'Oversee team productivity, identify bottlenecks, and drive engineering excellence across your squad.',
-    manager: 'Strategic insights across all teams. Make data-driven decisions to optimize organizational performance.',
-  };
+  // Optimized: Memoize role change handler
+  const handleRoleChange = useCallback((newRole: UserRole) => {
+    setRole(newRole);
+  }, []);
+
+  const roleTitle = useMemo(() => {
+    switch (role) {
+      case 'developer': return 'Developer';
+      case 'team-lead': return 'Team Lead';
+      case 'manager': return 'Engineering Manager';
+      default: return 'Developer';
+    }
+  }, [role]);
 
   return (
     <div className="min-h-screen relative overflow-hidden">
-      {/* Animated Background */}
+      {/* Optimized Background - Pure CSS, no canvas */}
       <div className="fixed inset-0 bg-gradient-to-br from-slate-950 via-purple-950 to-slate-950" />
       <ParticleBackground />
       
-      {/* Liquid Blobs */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="liquid-blob absolute top-0 left-1/4 w-96 h-96 bg-purple-500/20 rounded-full" />
-        <div className="liquid-blob absolute bottom-0 right-1/4 w-96 h-96 bg-blue-500/20 rounded-full" style={{ animationDelay: '5s' }} />
-        <div className="liquid-blob absolute top-1/2 left-1/2 w-96 h-96 bg-pink-500/20 rounded-full" style={{ animationDelay: '10s' }} />
-      </div>
-
       {/* Gradient Mesh Overlay */}
       <div className="fixed inset-0 gradient-mesh pointer-events-none" />
 
@@ -70,7 +83,7 @@ export default function Dashboard() {
                 </p>
               </div>
             </div>
-            <RoleSelector role={role} onRoleChange={setRole} />
+            <RoleSelector role={role} onRoleChange={handleRoleChange} />
           </div>
         </div>
       </header>
@@ -78,7 +91,7 @@ export default function Dashboard() {
       {/* Main Content */}
       <main className="container mx-auto px-6 py-12 relative z-10">
         <div className="space-y-8">
-          {/* Hero Section with Neumorphic Design */}
+          {/* Hero Section */}
           <div className={`neuro-card rounded-3xl p-8 ${mounted ? 'animate-scale-in' : 'opacity-0'}`}>
             <div className="relative">
               <div className="flex items-center gap-3 mb-4">
@@ -87,7 +100,7 @@ export default function Dashboard() {
                 <div className="flex-1 h-px bg-gradient-to-r from-emerald-400/50 to-transparent" />
               </div>
               <h2 className="text-4xl font-bold text-white mb-3 flex items-center gap-3">
-                Welcome back, {role === 'developer' ? 'Developer' : role === 'team-lead' ? 'Team Lead' : 'Engineering Manager'}
+                Welcome back, {roleTitle}
                 <Zap className="h-8 w-8 text-yellow-400 animate-pulse" />
               </h2>
               <p className="text-slate-300 text-lg max-w-3xl leading-relaxed">
@@ -96,7 +109,7 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {/* Bento Box Grid - Asymmetric Layout */}
+          {/* Metric Cards Grid */}
           <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 ${mounted ? 'animate-slide-up-fade' : 'opacity-0'}`}>
             <MetricCard
               icon={GitPullRequest}
@@ -139,12 +152,12 @@ export default function Dashboard() {
             />
           </div>
 
-          {/* Alerts with Enhanced Design */}
+          {/* Alerts */}
           <div className={mounted ? 'animate-scale-in' : 'opacity-0'} style={{ animationDelay: '0.4s' }}>
             <AlertPanel alerts={alerts} />
           </div>
 
-          {/* Metrics Charts with Glassmorphism */}
+          {/* Metrics Charts */}
           <div className={mounted ? 'animate-scale-in' : 'opacity-0'} style={{ animationDelay: '0.5s' }}>
             <MetricsCharts
               prMetrics={prMetrics}
@@ -157,7 +170,7 @@ export default function Dashboard() {
         </div>
       </main>
 
-      {/* Premium Footer */}
+      {/* Footer */}
       <footer className="relative z-10 backdrop-blur-2xl bg-slate-950/50 border-t border-white/5 mt-20">
         <div className="container mx-auto px-6 py-8">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
@@ -183,7 +196,7 @@ export default function Dashboard() {
               <span>•</span>
               <span className="flex items-center gap-2">
                 <Sparkles className="h-3 w-3 text-pink-400" />
-                Built with ❤️
+                Optimized Performance
               </span>
             </div>
           </div>
