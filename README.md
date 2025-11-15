@@ -182,9 +182,9 @@ This is an internal tool for demonstration purposes. For production use:
 
 MIT License - Internal Use Only
 
-## Team
+## dev
 
-Built by the Engineering Team
+Built by Abhi
 
 ---
 
