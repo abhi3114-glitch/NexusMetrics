@@ -1,7 +1,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { PRMetric, BuildMetric, CodeChurnMetric, DeveloperStats, UserRole } from '@/types';
 import { LineChart, Line, BarChart, Bar, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
-import { TrendingUp, GitPullRequest, AlertCircle, Code2, Users } from 'lucide-react';
+import { TrendingUp, GitPullRequest, AlertCircle, Code2, Users, Activity, Zap } from 'lucide-react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
@@ -16,120 +16,249 @@ interface MetricsChartsProps {
 
 const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'];
 
-export default function MetricsCharts({ prMetrics, buildMetrics, codeChurnMetrics, developerStats, role }: MetricsChartsProps) {
-  const latestPR = prMetrics[prMetrics.length - 1];
-  const latestBuild = buildMetrics[buildMetrics.length - 1];
-  const latestChurn = codeChurnMetrics[codeChurnMetrics.length - 1];
-  const buildSuccessRate = latestBuild ? ((latestBuild.successfulBuilds / latestBuild.totalBuilds) * 100).toFixed(1) : 0;
+interface TooltipProps {
+  active?: boolean;
+  payload?: Array<{
+    name: string;
+    value: number;
+    color: string;
+  }>;
+  label?: string;
+}
 
+const CustomTooltip = ({ active, payload, label }: TooltipProps) => {
+  if (active && payload && payload.length) {
+    return (
+      <div className="bg-slate-900/95 backdrop-blur-xl border border-white/10 rounded-lg p-3 shadow-2xl">
+        <p className="text-slate-400 text-xs mb-2">{label}</p>
+        {payload.map((entry, index) => (
+          <div key={index} className="flex items-center gap-2 text-sm">
+            <div className="h-2 w-2 rounded-full" style={{ backgroundColor: entry.color }} />
+            <span className="text-white font-medium">{entry.name}:</span>
+            <span className="text-slate-300">{entry.value}</span>
+          </div>
+        ))}
+      </div>
+    );
+  }
+  return null;
+};
+
+export default function MetricsCharts({ prMetrics, buildMetrics, codeChurnMetrics, developerStats, role }: MetricsChartsProps) {
   return (
     <div className="space-y-6">
-      {/* KPI Cards */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">PR Velocity</CardTitle>
-            <GitPullRequest className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{latestPR?.prsMerged || 0}</div>
-            <p className="text-xs text-muted-foreground">PRs merged today</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Build Success Rate</CardTitle>
-            <TrendingUp className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{buildSuccessRate}%</div>
-            <p className="text-xs text-muted-foreground">Last 24 hours</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Code Churn</CardTitle>
-            <Code2 className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{latestChurn?.commits || 0}</div>
-            <p className="text-xs text-muted-foreground">Commits today</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Avg Review Time</CardTitle>
-            <AlertCircle className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{latestPR?.avgReviewTime || 0}h</div>
-            <p className="text-xs text-muted-foreground">Current average</p>
-          </CardContent>
-        </Card>
-      </div>
-
       {/* PR Velocity Chart */}
-      <Card>
-        <CardHeader>
-          <CardTitle>PR Velocity Trends</CardTitle>
-          <CardDescription>Pull request activity over the last 30 days</CardDescription>
+      <Card className="border-white/10 bg-gradient-to-br from-slate-900/90 to-slate-800/90 backdrop-blur-xl overflow-hidden group">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-blue-500/10 to-purple-500/10 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+        <CardHeader className="relative">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="h-12 w-12 rounded-xl bg-blue-500/20 flex items-center justify-center">
+                <GitPullRequest className="h-6 w-6 text-blue-400" />
+              </div>
+              <div>
+                <CardTitle className="text-white text-xl">PR Velocity Trends</CardTitle>
+                <CardDescription className="text-slate-400">Pull request activity over the last 30 days</CardDescription>
+              </div>
+            </div>
+            <Badge variant="outline" className="bg-blue-500/10 border-blue-500/30 text-blue-400">
+              <TrendingUp className="h-3 w-3 mr-1" />
+              +12.5%
+            </Badge>
+          </div>
         </CardHeader>
-        <CardContent>
-          <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={prMetrics}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="date" tick={{ fontSize: 12 }} tickFormatter={(value) => value.slice(5)} />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Line type="monotone" dataKey="prsOpened" stroke="#3b82f6" name="Opened" strokeWidth={2} />
-              <Line type="monotone" dataKey="prsMerged" stroke="#10b981" name="Merged" strokeWidth={2} />
-              <Line type="monotone" dataKey="prsClosed" stroke="#ef4444" name="Closed" strokeWidth={2} />
+        <CardContent className="relative">
+          <ResponsiveContainer width="100%" height={320}>
+            <LineChart data={prMetrics} margin={{ top: 5, right: 30, left: 0, bottom: 5 }}>
+              <defs>
+                <linearGradient id="colorOpened" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3}/>
+                  <stop offset="95%" stopColor="#3b82f6" stopOpacity={0}/>
+                </linearGradient>
+                <linearGradient id="colorMerged" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#10b981" stopOpacity={0.3}/>
+                  <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" stroke="#334155" opacity={0.3} />
+              <XAxis 
+                dataKey="date" 
+                tick={{ fontSize: 12, fill: '#94a3b8' }} 
+                tickFormatter={(value) => value.slice(5)}
+                stroke="#334155"
+              />
+              <YAxis tick={{ fontSize: 12, fill: '#94a3b8' }} stroke="#334155" />
+              <Tooltip content={<CustomTooltip />} />
+              <Legend 
+                wrapperStyle={{ paddingTop: '20px' }}
+                iconType="circle"
+                formatter={(value) => <span className="text-slate-300 text-sm">{value}</span>}
+              />
+              <Line 
+                type="monotone" 
+                dataKey="prsOpened" 
+                stroke="#3b82f6" 
+                name="Opened" 
+                strokeWidth={3}
+                dot={{ fill: '#3b82f6', strokeWidth: 2, r: 4 }}
+                activeDot={{ r: 6, fill: '#3b82f6' }}
+                fill="url(#colorOpened)"
+              />
+              <Line 
+                type="monotone" 
+                dataKey="prsMerged" 
+                stroke="#10b981" 
+                name="Merged" 
+                strokeWidth={3}
+                dot={{ fill: '#10b981', strokeWidth: 2, r: 4 }}
+                activeDot={{ r: 6, fill: '#10b981' }}
+                fill="url(#colorMerged)"
+              />
+              <Line 
+                type="monotone" 
+                dataKey="prsClosed" 
+                stroke="#ef4444" 
+                name="Closed" 
+                strokeWidth={2}
+                strokeDasharray="5 5"
+                dot={{ fill: '#ef4444', strokeWidth: 2, r: 3 }}
+              />
             </LineChart>
           </ResponsiveContainer>
         </CardContent>
       </Card>
 
       {/* Build Failures Chart */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Build Success & Failure Rates</CardTitle>
-          <CardDescription>CI/CD pipeline performance metrics</CardDescription>
+      <Card className="border-white/10 bg-gradient-to-br from-slate-900/90 to-slate-800/90 backdrop-blur-xl overflow-hidden group">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-green-500/10 to-emerald-500/10 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+        <CardHeader className="relative">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="h-12 w-12 rounded-xl bg-green-500/20 flex items-center justify-center">
+                <Activity className="h-6 w-6 text-green-400" />
+              </div>
+              <div>
+                <CardTitle className="text-white text-xl">CI/CD Pipeline Performance</CardTitle>
+                <CardDescription className="text-slate-400">Build success and failure rates over time</CardDescription>
+              </div>
+            </div>
+            <Badge variant="outline" className="bg-green-500/10 border-green-500/30 text-green-400">
+              <Zap className="h-3 w-3 mr-1" />
+              Healthy
+            </Badge>
+          </div>
         </CardHeader>
-        <CardContent>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={buildMetrics}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="date" tick={{ fontSize: 12 }} tickFormatter={(value) => value.slice(5)} />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Bar dataKey="successfulBuilds" fill="#10b981" name="Successful" />
-              <Bar dataKey="failedBuilds" fill="#ef4444" name="Failed" />
+        <CardContent className="relative">
+          <ResponsiveContainer width="100%" height={320}>
+            <BarChart data={buildMetrics} margin={{ top: 5, right: 30, left: 0, bottom: 5 }}>
+              <defs>
+                <linearGradient id="successGradient" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#10b981" stopOpacity={1}/>
+                  <stop offset="100%" stopColor="#059669" stopOpacity={0.8}/>
+                </linearGradient>
+                <linearGradient id="failGradient" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#ef4444" stopOpacity={1}/>
+                  <stop offset="100%" stopColor="#dc2626" stopOpacity={0.8}/>
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" stroke="#334155" opacity={0.3} />
+              <XAxis 
+                dataKey="date" 
+                tick={{ fontSize: 12, fill: '#94a3b8' }} 
+                tickFormatter={(value) => value.slice(5)}
+                stroke="#334155"
+              />
+              <YAxis tick={{ fontSize: 12, fill: '#94a3b8' }} stroke="#334155" />
+              <Tooltip content={<CustomTooltip />} />
+              <Legend 
+                wrapperStyle={{ paddingTop: '20px' }}
+                iconType="circle"
+                formatter={(value) => <span className="text-slate-300 text-sm">{value}</span>}
+              />
+              <Bar 
+                dataKey="successfulBuilds" 
+                fill="url(#successGradient)" 
+                name="Successful" 
+                radius={[8, 8, 0, 0]}
+                maxBarSize={60}
+              />
+              <Bar 
+                dataKey="failedBuilds" 
+                fill="url(#failGradient)" 
+                name="Failed" 
+                radius={[8, 8, 0, 0]}
+                maxBarSize={60}
+              />
             </BarChart>
           </ResponsiveContainer>
         </CardContent>
       </Card>
 
       {/* Code Churn Chart */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Code Churn Analysis</CardTitle>
-          <CardDescription>Lines of code added and deleted over time</CardDescription>
+      <Card className="border-white/10 bg-gradient-to-br from-slate-900/90 to-slate-800/90 backdrop-blur-xl overflow-hidden group">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-purple-500/10 to-pink-500/10 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+        <CardHeader className="relative">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="h-12 w-12 rounded-xl bg-purple-500/20 flex items-center justify-center">
+                <Code2 className="h-6 w-6 text-purple-400" />
+              </div>
+              <div>
+                <CardTitle className="text-white text-xl">Code Churn Analysis</CardTitle>
+                <CardDescription className="text-slate-400">Lines of code added and deleted over time</CardDescription>
+              </div>
+            </div>
+            <Badge variant="outline" className="bg-purple-500/10 border-purple-500/30 text-purple-400">
+              <Activity className="h-3 w-3 mr-1 animate-pulse" />
+              Active
+            </Badge>
+          </div>
         </CardHeader>
-        <CardContent>
-          <ResponsiveContainer width="100%" height={300}>
-            <AreaChart data={codeChurnMetrics}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="date" tick={{ fontSize: 12 }} tickFormatter={(value) => value.slice(5)} />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Area type="monotone" dataKey="linesAdded" stackId="1" stroke="#3b82f6" fill="#3b82f6" name="Lines Added" />
-              <Area type="monotone" dataKey="linesDeleted" stackId="1" stroke="#f59e0b" fill="#f59e0b" name="Lines Deleted" />
+        <CardContent className="relative">
+          <ResponsiveContainer width="100%" height={320}>
+            <AreaChart data={codeChurnMetrics} margin={{ top: 5, right: 30, left: 0, bottom: 5 }}>
+              <defs>
+                <linearGradient id="addedGradient" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.8}/>
+                  <stop offset="95%" stopColor="#3b82f6" stopOpacity={0.1}/>
+                </linearGradient>
+                <linearGradient id="deletedGradient" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#f59e0b" stopOpacity={0.8}/>
+                  <stop offset="95%" stopColor="#f59e0b" stopOpacity={0.1}/>
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" stroke="#334155" opacity={0.3} />
+              <XAxis 
+                dataKey="date" 
+                tick={{ fontSize: 12, fill: '#94a3b8' }} 
+                tickFormatter={(value) => value.slice(5)}
+                stroke="#334155"
+              />
+              <YAxis tick={{ fontSize: 12, fill: '#94a3b8' }} stroke="#334155" />
+              <Tooltip content={<CustomTooltip />} />
+              <Legend 
+                wrapperStyle={{ paddingTop: '20px' }}
+                iconType="circle"
+                formatter={(value) => <span className="text-slate-300 text-sm">{value}</span>}
+              />
+              <Area 
+                type="monotone" 
+                dataKey="linesAdded" 
+                stackId="1" 
+                stroke="#3b82f6" 
+                fill="url(#addedGradient)" 
+                name="Lines Added"
+                strokeWidth={2}
+              />
+              <Area 
+                type="monotone" 
+                dataKey="linesDeleted" 
+                stackId="1" 
+                stroke="#f59e0b" 
+                fill="url(#deletedGradient)" 
+                name="Lines Deleted"
+                strokeWidth={2}
+              />
             </AreaChart>
           </ResponsiveContainer>
         </CardContent>
@@ -137,62 +266,118 @@ export default function MetricsCharts({ prMetrics, buildMetrics, codeChurnMetric
 
       {/* Team Performance Table - Only for Team Lead and Manager */}
       {(role === 'team-lead' || role === 'manager') && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Users className="h-5 w-5" />
-              Team Performance Overview
-            </CardTitle>
-            <CardDescription>Individual developer metrics and statistics</CardDescription>
+        <Card className="border-white/10 bg-gradient-to-br from-slate-900/90 to-slate-800/90 backdrop-blur-xl overflow-hidden">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-indigo-500/10 to-blue-500/10 rounded-full blur-3xl" />
+          <CardHeader className="relative">
+            <div className="flex items-center gap-3">
+              <div className="h-12 w-12 rounded-xl bg-indigo-500/20 flex items-center justify-center">
+                <Users className="h-6 w-6 text-indigo-400" />
+              </div>
+              <div>
+                <CardTitle className="text-white text-xl">Team Performance Overview</CardTitle>
+                <CardDescription className="text-slate-400">Individual developer metrics and statistics</CardDescription>
+              </div>
+            </div>
           </CardHeader>
-          <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Developer</TableHead>
-                  <TableHead>Team</TableHead>
-                  <TableHead className="text-right">PR Velocity</TableHead>
-                  <TableHead className="text-right">Build Success</TableHead>
-                  <TableHead className="text-right">Code Churn</TableHead>
-                  <TableHead className="text-right">Active Issues</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {developerStats.map((stat) => (
-                  <TableRow key={stat.developer.id}>
-                    <TableCell className="font-medium">
-                      <div className="flex items-center gap-2">
-                        <Avatar className="h-8 w-8">
-                          <AvatarFallback>{stat.developer.avatar}</AvatarFallback>
-                        </Avatar>
-                        {stat.developer.name}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant="outline">{stat.developer.team}</Badge>
-                    </TableCell>
-                    <TableCell className="text-right">{stat.prVelocity}</TableCell>
-                    <TableCell className="text-right">{stat.buildSuccessRate}%</TableCell>
-                    <TableCell className="text-right">{stat.codeChurn.toLocaleString()}</TableCell>
-                    <TableCell className="text-right">{stat.activeIssues}</TableCell>
+          <CardContent className="relative">
+            <div className="rounded-lg border border-white/10 overflow-hidden">
+              <Table>
+                <TableHeader>
+                  <TableRow className="border-white/10 hover:bg-slate-800/50">
+                    <TableHead className="text-slate-400 font-semibold">Developer</TableHead>
+                    <TableHead className="text-slate-400 font-semibold">Team</TableHead>
+                    <TableHead className="text-right text-slate-400 font-semibold">PR Velocity</TableHead>
+                    <TableHead className="text-right text-slate-400 font-semibold">Build Success</TableHead>
+                    <TableHead className="text-right text-slate-400 font-semibold">Code Churn</TableHead>
+                    <TableHead className="text-right text-slate-400 font-semibold">Active Issues</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                </TableHeader>
+                <TableBody>
+                  {developerStats.map((stat, index) => (
+                    <TableRow 
+                      key={stat.developer.id} 
+                      className="border-white/10 hover:bg-slate-800/50 transition-colors"
+                      style={{ animationDelay: `${index * 0.05}s` }}
+                    >
+                      <TableCell className="font-medium">
+                        <div className="flex items-center gap-3">
+                          <Avatar className="h-10 w-10 border-2 border-white/10">
+                            <AvatarFallback className="bg-gradient-to-br from-blue-500 to-purple-600 text-white font-semibold">
+                              {stat.developer.avatar}
+                            </AvatarFallback>
+                          </Avatar>
+                          <span className="text-white">{stat.developer.name}</span>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant="outline" className="bg-slate-800/50 border-white/10 text-slate-300">
+                          {stat.developer.team}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <span className="text-white font-semibold">{stat.prVelocity}</span>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <div className="flex items-center justify-end gap-2">
+                          <div className="h-2 w-16 bg-slate-700 rounded-full overflow-hidden">
+                            <div 
+                              className="h-full bg-gradient-to-r from-green-500 to-emerald-500 rounded-full"
+                              style={{ width: `${stat.buildSuccessRate}%` }}
+                            />
+                          </div>
+                          <span className="text-white font-semibold w-12">{stat.buildSuccessRate}%</span>
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <span className="text-white font-semibold">{stat.codeChurn.toLocaleString()}</span>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <Badge 
+                          variant="outline" 
+                          className={`${
+                            stat.activeIssues > 10 
+                              ? 'bg-red-500/10 border-red-500/30 text-red-400' 
+                              : 'bg-green-500/10 border-green-500/30 text-green-400'
+                          }`}
+                        >
+                          {stat.activeIssues}
+                        </Badge>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
           </CardContent>
         </Card>
       )}
 
       {/* Team Distribution Pie Chart - Manager Only */}
       {role === 'manager' && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Team Distribution</CardTitle>
-            <CardDescription>Developer count by team</CardDescription>
+        <Card className="border-white/10 bg-gradient-to-br from-slate-900/90 to-slate-800/90 backdrop-blur-xl overflow-hidden">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-pink-500/10 to-rose-500/10 rounded-full blur-3xl" />
+          <CardHeader className="relative">
+            <div className="flex items-center gap-3">
+              <div className="h-12 w-12 rounded-xl bg-pink-500/20 flex items-center justify-center">
+                <Users className="h-6 w-6 text-pink-400" />
+              </div>
+              <div>
+                <CardTitle className="text-white text-xl">Team Distribution</CardTitle>
+                <CardDescription className="text-slate-400">Developer count by team across organization</CardDescription>
+              </div>
+            </div>
           </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
+          <CardContent className="relative">
+            <ResponsiveContainer width="100%" height={320}>
               <PieChart>
+                <defs>
+                  {COLORS.map((color, index) => (
+                    <linearGradient key={index} id={`pieGradient${index}`} x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor={color} stopOpacity={1}/>
+                      <stop offset="100%" stopColor={color} stopOpacity={0.7}/>
+                    </linearGradient>
+                  ))}
+                </defs>
                 <Pie
                   data={[
                     { name: 'Frontend', value: 2 },
@@ -203,15 +388,18 @@ export default function MetricsCharts({ prMetrics, buildMetrics, codeChurnMetric
                   cy="50%"
                   labelLine={false}
                   label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                  outerRadius={80}
+                  outerRadius={100}
+                  innerRadius={60}
                   fill="#8884d8"
                   dataKey="value"
+                  stroke="#1e293b"
+                  strokeWidth={2}
                 >
                   {[0, 1, 2].map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    <Cell key={`cell-${index}`} fill={`url(#pieGradient${index})`} />
                   ))}
                 </Pie>
-                <Tooltip />
+                <Tooltip content={<CustomTooltip />} />
               </PieChart>
             </ResponsiveContainer>
           </CardContent>
